@@ -1,12 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import { ensureTesseractModel } from "./utils/tesseractEnsureModel.js";
 
 await ensureTesseractModel(); //Make sure the tesseract model exist in /tessdata
-
-dotenv.config();
 
 const app = express();
 

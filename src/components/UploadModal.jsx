@@ -37,6 +37,7 @@ export default function UploadModal({ onClose }) {
 
   // Simulate upload (replace with real API later)
   const uploadFile = (file) => {
+        console.log("uploading");
         const formData = new FormData();
         formData.append("resume", file);
 

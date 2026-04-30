@@ -1,5 +1,6 @@
 import { extractText } from "../utils/parser.js";
 import logger from "../utils/logger.js";
+import { analyzeResume } from "../services/aiService.js";
 
 export const createResume = async (req, res) => {
   try {
@@ -11,7 +12,8 @@ export const createResume = async (req, res) => {
 
     //file parsing
     const text = await extractText(file);
-    //console.log("Extracted text:", text); // preview
+    const analysis = await analyzeResume(text);
+    console.log(analysis);
 
     const result = {
       score: 85,
