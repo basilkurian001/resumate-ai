@@ -11,7 +11,7 @@ export const createResume = async (req, res) => {
 
     //file parsing
     const text = await extractText(file);
-    console.log("Extracted text:", text.slice(0, 200)); // preview
+    //console.log("Extracted text:", text); // preview
 
     const result = {
       score: 85,

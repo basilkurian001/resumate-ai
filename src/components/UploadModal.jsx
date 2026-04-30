@@ -12,8 +12,27 @@ export default function UploadModal({ onClose }) {
   const handleFile = (selectedFile) => {
     if (!selectedFile) return;
 
+    //verify that the file is pdf/docx
+    const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(selectedFile.type)) {
+      alert("Only PDF or DOCX files are allowed");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (selectedFile.size > maxSize) {
+      alert("File size must be less than 10MB");
+      return;
+    }
+
     setFile(selectedFile);
-    uploadFile(selectedFile);
+    setUploaded(false);   //reset file uploaded status
+    setProgress(0);
   };
 
   // Simulate upload (replace with real API later)
@@ -38,7 +57,7 @@ export default function UploadModal({ onClose }) {
 
         xhr.open("POST", "http://localhost:5000/api/resumes");
         xhr.send(formData);
-    };
+  };
 
   // Drag handlers
   const handleDrop = (e) => {
@@ -112,8 +131,12 @@ export default function UploadModal({ onClose }) {
         )}
 
         {/* Analyze Button */}
-        {uploaded && (
-          <button className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-xl">
+        {file && (
+          <button
+          onClick={() => uploadFile(file)}
+          disabled={!file}
+          className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50"
+          >
             Analyze Resume
           </button>
         )}
