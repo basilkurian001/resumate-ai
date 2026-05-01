@@ -1,12 +1,15 @@
 import { useState, useRef } from "react";
 import { FileUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function UploadModal({ onClose }) {
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [uploaded, setUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const fileInputRef = useRef();
+  const navigate = useNavigate();
 
   // Handle file selection
   const handleFile = (selectedFile) => {
@@ -31,33 +34,74 @@ export default function UploadModal({ onClose }) {
     }
 
     setFile(selectedFile);
-    setUploaded(false);   //reset file uploaded status
     setProgress(0);
   };
 
   // Simulate upload (replace with real API later)
-  const uploadFile = (file) => {
-        console.log("uploading");
-        const formData = new FormData();
-        formData.append("resume", file);
+  const startAnalysis = async () => {
+    if (!file) return;
 
-        const xhr = new XMLHttpRequest();
+    setLoading(true);
+    setProgress(5); // immediate feedback
 
-        xhr.upload.onprogress = (e) => {
-            const percent = Math.round((e.loaded * 100) / e.total);
-            setProgress(percent);
-        };
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
 
-        xhr.onload = () => {
-            if (xhr.status === 201) {
-                const data = JSON.parse(xhr.response);
-                console.log(data);
-                setUploaded(true);
-            }
-        };
+      const res = await fetch("http://localhost:5000/api/resumes", {
+        method: "POST",
+        body: formData,
+      });
 
-        xhr.open("POST", "http://localhost:5000/api/resumes");
-        xhr.send(formData);
+      if (!res.ok) throw new Error("Upload failed");
+
+      const { jobId } = await res.json();
+
+      pollStatus(jobId);
+
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed, Please try again");
+      setLoading(false);
+    }
+  };
+
+  const pollStatus = (jobId) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/resumes/${jobId}/status`
+        );
+
+        const data = await res.json();
+
+        setProgress((prev) => Math.max(prev, data.progress));
+
+        if (data.status === "completed") {
+          clearInterval(interval);
+
+          localStorage.setItem(
+            "analysis",
+            JSON.stringify(data.result)
+          );
+          
+          onClose();
+          navigate("/result");
+        }
+
+        if (data.status === "failed") {
+          clearInterval(interval);
+          alert("Processing failed");
+          setLoading(false);
+        }
+
+      } catch (err) {
+        clearInterval(interval);
+        console.error(err);
+        alert("Connection error");
+        setLoading(false);
+      }
+    }, 800);
   };
 
   // Drag handlers
@@ -70,7 +114,9 @@ export default function UploadModal({ onClose }) {
 
   return (
     <div
-      onClick={onClose}
+      onClick= { ()=> {
+        if (!loading) onClose();
+      }}
       className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
     >
       <div
@@ -79,8 +125,14 @@ export default function UploadModal({ onClose }) {
       >
         {/* Upload Area */}
         <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
+          onDrop={(e) => {
+            if (loading) return;
+            handleDrop(e);
+          }}
+          onDragOver={(e) => {
+            if (loading) return;
+            handleDragOver(e);
+          }}
           className="border-2 border-dashed border-indigo-300 rounded-xl p-10 cursor-pointer hover:bg-gray-50 transition"
         >
           <div className="mb-4 flex justify-center">
@@ -97,6 +149,7 @@ export default function UploadModal({ onClose }) {
 
           <button
             onClick={() => fileInputRef.current.click()}
+            disabled={loading}
             className="bg-indigo-600 text-white px-6 py-2 rounded-full shadow-md"
           >
             Browse Files
@@ -134,11 +187,11 @@ export default function UploadModal({ onClose }) {
         {/* Analyze Button */}
         {file && (
           <button
-          onClick={() => uploadFile(file)}
-          disabled={!file}
-          className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50"
+            onClick={startAnalysis}
+            disabled={!file || loading}
+            className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50"
           >
-            Analyze Resume
+            {loading ? "Analyzing..." : "Analyze Resume"}
           </button>
         )}
       </div>

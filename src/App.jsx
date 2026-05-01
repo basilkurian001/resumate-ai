@@ -1,10 +1,16 @@
-import { useState } from 'react';
+//import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import Landing from './pages/Landing';
+import Result from "./pages/Result";
 
 export default function App() {
-  const [showDemo, setShowDemo] = useState(false);
   return (
-    <Landing />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/result" element={<Result />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
