@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { FileUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function UploadModal({ onClose }) {
   const [file, setFile] = useState(null);
@@ -49,7 +50,7 @@ export default function UploadModal({ onClose }) {
       const formData = new FormData();
       formData.append("resume", file);
 
-      const res = await fetch("http://localhost:5000/api/resumes", {
+      const res = await fetch(`${API_BASE}/api/resumes`, {
         method: "POST",
         body: formData,
       });
@@ -71,7 +72,7 @@ export default function UploadModal({ onClose }) {
     const interval = setInterval(async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/resumes/${jobId}/status`
+          `${API_BASE}/api/resumes/${jobId}/status`
         );
 
         const data = await res.json();
