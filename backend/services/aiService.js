@@ -112,7 +112,6 @@ ${resumeText}
    MAIN FUNCTION
 ========================= */
 export const analyzeResume = async (resumeText) => {
-    console.log("AI analysis started");
   const client = getClient();
 
   try {
@@ -135,7 +134,6 @@ export const analyzeResume = async (resumeText) => {
     );
 
     const raw = completion.choices?.[0]?.message?.content || "";
-    console.log(raw);
 
     const parsed = extractJSON(raw);
 
