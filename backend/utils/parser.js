@@ -116,7 +116,13 @@ export const extractText = async (file) => {
       });
       return result.value;
     } catch (err) {
-      console.error("DOCX_PARSE_ERROR: ", err);
+      //console.error("DOCX_PARSE_ERROR: ", err);
+      logger.error("DOCX_PARSE_ERROR", {
+        message: err.message,
+        file: file.originalname,
+        savedAt: filePath,
+        mime: file.mimetype
+      });
       throw new Error("DOCX_PARSE_ERROR: " + (err?.message || JSON.stringify(err)));
     }
   }

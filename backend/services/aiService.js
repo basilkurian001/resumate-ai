@@ -144,8 +144,13 @@ export const analyzeResume = async (resumeText) => {
     return parsed;
 
   } catch (err) {
-    console.error("AI_ERROR:", err.message);
-
+    //console.error("AI_ERROR:", err.message);
+    logger.error("AI_RESPONSE_ERROR", {
+        message: err.message,
+        file: file.originalname,
+        savedAt: filePath,
+        mime: file.mimetype
+    });
     // Safe fallback (prevents frontend crash)
     return {
       atsScore: 0,

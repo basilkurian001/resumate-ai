@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { FileUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function UploadModal({ onClose }) {
   const [file, setFile] = useState(null);
@@ -163,8 +164,15 @@ export default function UploadModal({ onClose }) {
             onChange={(e) => handleFile(e.target.files[0])}
           />
 
-          <p className="text-gray-500 text-sm mt-6">
-            You're data is encrypted and is never shared with third parties.
+          <p className="text-gray-500 text-xs mt-6">
+            By using our services you agree to our{" "}
+            <Link to="/terms" className="text-indigo-600 hover:underline">
+              Terms & Conditions
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="text-indigo-600 hover:underline">
+              Privacy Policy
+            </Link>.
           </p>
         </div>
 
