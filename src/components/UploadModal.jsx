@@ -50,7 +50,7 @@ export default function UploadModal({ onClose }) {
       const formData = new FormData();
       formData.append("resume", file);
 
-      const res = await fetch(`${API_BASE}/api/resumes`, {
+      const res = await fetch(`${API_BASE}/resumes`, {
         method: "POST",
         body: formData,
       });
@@ -72,7 +72,7 @@ export default function UploadModal({ onClose }) {
     const interval = setInterval(async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/resumes/${jobId}/status`
+          `${API_BASE}/resumes/${jobId}/status`
         );
 
         const data = await res.json();
