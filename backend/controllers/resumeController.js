@@ -45,7 +45,14 @@ const processResume = async (jobId, file) => {
       progress: 70,
     });
 
-    const analysis = await analyzeResume(text);
+    const filePath = file.path;
+
+    //const analysis = await analyzeResume(text, file);
+    const analysis = await analyzeResume(text, {
+      file: file.originalname,
+      savedAt: filePath,
+      mime: file.mimetype
+    });
 
     //after a successful analysis log the usage number
     logUsage({
