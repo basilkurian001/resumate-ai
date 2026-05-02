@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import extract from "pdf-text-extract";
 import { promisify } from "util";
 import Tesseract from "tesseract.js";
-import pdf from "pdf-poppler";
+//import pdf from "pdf-poppler";
 
 const extractAsync = promisify(extract);
 
@@ -149,6 +149,7 @@ async function extractWithOCR(buffer) {
       // =========================
       // WINDOWS → pdf-poppler
       // =========================
+      const pdf = (await import("pdf-poppler")).default;
       await pdf.convert(pdfPath, {
         format: "png",
         out_dir: tempDir,
