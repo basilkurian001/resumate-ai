@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import logger from "../utils/logger.js"
+import path from "path";
 
 /* =========================
    LAZY INIT (fixes env timing bug)
@@ -111,7 +113,7 @@ ${resumeText}
 /* =========================
    MAIN FUNCTION
 ========================= */
-export const analyzeResume = async (resumeText) => {
+export const analyzeResume = async (resumeText, fileMeta = {}) => {
   const client = getClient();
 
   try {
@@ -146,10 +148,10 @@ export const analyzeResume = async (resumeText) => {
   } catch (err) {
     //console.error("AI_ERROR:", err.message);
     logger.error("AI_RESPONSE_ERROR", {
-        message: err.message,
-        file: file.originalname,
-        savedAt: filePath,
-        mime: file.mimetype
+      message: err.message,
+      file: fileMeta.file,
+      savedAt: fileMeta.savedAt,
+      mime: fileMeta.mime
     });
     // Safe fallback (prevents frontend crash)
     return {

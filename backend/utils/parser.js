@@ -1,3 +1,5 @@
+const isLinux = process.platform === "linux";
+const isWindows = process.platform === "win32";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import mammoth from "mammoth";
 import fs from "fs";
@@ -131,7 +133,72 @@ export const extractText = async (file) => {
 };
 
 //Tesseract OCR pdf parser
+import { execSync } from "child_process";
+
 async function extractWithOCR(buffer) {
+  const tempDir = path.join(os.tmpdir(), uuidv4());
+  fs.mkdirSync(tempDir);
+
+  const pdfPath = path.join(tempDir, "input.pdf");
+  fs.writeFileSync(pdfPath, buffer);
+
+  let text = "";
+
+  try {
+    if (isWindows) {
+      // =========================
+      // WINDOWS → pdf-poppler
+      // =========================
+      await pdf.convert(pdfPath, {
+        format: "png",
+        out_dir: tempDir,
+        out_prefix: "page",
+        page: null,
+        scale: 1024,
+      });
+
+    } else if (isLinux) {
+      // =========================
+      // LINUX → pdftoppm
+      // =========================
+      execSync(
+        `pdftoppm -png -r 300 "${pdfPath}" "${path.join(tempDir, "page")}"`
+      );
+    }
+
+    // =========================
+    // OCR PART (COMMON)
+    // =========================
+    const files = fs.readdirSync(tempDir).filter((f) => f.endsWith(".png"));
+
+    for (const file of files) {
+      const imagePath = path.join(tempDir, file);
+
+      const result = await Tesseract.recognize(imagePath, "eng", {
+        langPath: "./tessdata",
+        cachePath: "./tessdata",
+      });
+
+      text += result.data.text + "\n";
+    }
+
+    const cleanText = (text) => {
+      return text
+        .replace(/[«»]/g, "•")        // fix bullets
+        .replace(/§/g, "5")           // fix numbers
+        .replace(/linkedin\.\s+/g, "linkedin.") // fix links
+        .replace(/\s+/g, " ")         // normalize spaces
+        .replace(/\n\s+/g, "\n")      // clean line starts
+        .trim();
+    };
+
+    return cleanText(text);
+
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+/* async function extractWithOCR(buffer) {
   const tempDir = path.join(os.tmpdir(), uuidv4());
   fs.mkdirSync(tempDir);
 
@@ -178,4 +245,4 @@ async function extractWithOCR(buffer) {
     // Cleanup
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
-}
+} */
