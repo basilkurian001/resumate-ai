@@ -1,4 +1,5 @@
 import { useState } from "react";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function ReportModal({ onClose }) {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ export default function ReportModal({ onClose }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/report", {
+      const res = await fetch(`${API_BASE}/report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +29,7 @@ export default function ReportModal({ onClose }) {
       alert("Issue reported successfully!");
       onClose();
 
-    } catch {
+    } catch (err){
       alert("Failed to send report");
     } finally {
       setLoading(false);
