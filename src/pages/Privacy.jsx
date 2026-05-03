@@ -11,7 +11,7 @@ export default function Privacy() {
         </h1>
 
         <p className="text-sm text-gray-500 mb-6">
-          Last Updated: [Add Date]
+          Last Updated: 3/05/2026
         </p>
 
         <p className="mb-6 text-gray-700">
@@ -83,12 +83,12 @@ export default function Privacy() {
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">5. Third-Party Services</h2>
           <p className="text-gray-700">
-            We may use third-party AI providers to process resume content. These services:
+            We may use third-party AI providers to process resume content.
           </p>
-          <ul className="list-disc ml-6 space-y-2 text-gray-600 mt-2">
+          {/* <ul className="list-disc ml-6 space-y-2 text-gray-600 mt-2">
             <li>Receive only necessary data</li>
             <li>Do not receive personal account data unless required</li>
-          </ul>
+          </ul> */}
         </section>
 
         {/* Section 6 */}

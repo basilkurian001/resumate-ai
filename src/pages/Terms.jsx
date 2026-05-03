@@ -8,7 +8,7 @@ export default function Terms() {
         </h1>
 
         <p className="text-sm text-gray-500 mb-6">
-          Last Updated: [Add Date]
+          Last Updated: 3/05/2026
         </p>
 
         <p className="mb-6 text-gray-700">
