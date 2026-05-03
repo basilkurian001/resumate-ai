@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import cors from "cors";
+//import cors from "cors";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import { ensureTesseractModel } from "./utils/tesseractEnsureModel.js";
 import reportRoutes from "./routes/reportRoutes.js";
@@ -11,7 +11,10 @@ await ensureTesseractModel(); //Make sure the tesseract model exist in /tessdata
 const app = express();
 
 // Middleware
-app.use(cors());
+/* app.use(cors()); */  //enable cors for dev server
+/* app.use(cors({
+  origin: "http://resumate.duckdns.org"
+})); */
 app.use(express.json());
 
 // Routes
@@ -26,6 +29,9 @@ app.get("/", (req, res) => {
 // Server start
 const PORT = process.env.PORT;
 
-app.listen(PORT, () => {
+/* app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+}); */
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`Server running on http://127.0.0.1:${PORT}`);
 });
