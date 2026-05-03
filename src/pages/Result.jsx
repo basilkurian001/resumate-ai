@@ -44,7 +44,7 @@ export default function Result() {
             <ScoreCard score={analysis.atsScore} />
 
             <div className="md:col-span-7 grid sm:grid-cols-2 gap-6">
-              <Skills />
+              <Skills skills={analysis.skills} />
             </div>
 
             <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
