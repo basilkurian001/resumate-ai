@@ -3,6 +3,7 @@ import logger from "../utils/logger.js";
 import { analyzeResume } from "../services/aiService.js";
 import { v4 as uuidv4 } from "uuid";
 import { logUsage } from "../utils/usageLogger.js";
+import {fileTypeFromBuffer} from 'file-type';
 
 const jobs = new Map();
 
@@ -24,6 +25,23 @@ export const createResume = async (req, res) => {
 
   // RETURN STATUS IMMEDIATELY
   res.status(202).json({ jobId });
+
+  //============ CHECK FILE TYPE USING file-type, IF FILE TYPE NOT SUPPORTED THEN EXIT FUNCTION ======================
+  const filetype = await fileTypeFromBuffer(file.buffer);
+  const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+  if(!filetype || !allowedTypes.includes(filetype.mime))
+  {
+    jobs.set(jobId, {
+      status: "failed",
+      progress: 0,
+      error: "Unsupported File Type",   //If unsupported filetype, then frontend "Unsupported filetype" error will appear
+    });
+    return;
+  }
+  //=====================================================================
 
   // BACKGROUND PROCESS (no await here)
   processResume(jobId, file);

@@ -93,7 +93,7 @@ export default function UploadModal({ onClose }) {
 
         if (data.status === "failed") {
           clearInterval(interval);
-          alert("Processing failed");
+          alert("Processing failed"+" - "+data.error);
           setLoading(false);
         }
 
