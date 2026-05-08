@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import extract from "pdf-text-extract";
 import { promisify } from "util";
 import Tesseract from "tesseract.js";
+import { saveFailedFile, logger } from "../utils/logger.js"
 //import pdf from "pdf-poppler";
 
 const extractAsync = promisify(extract);
@@ -94,14 +95,14 @@ export const extractText = async (file) => {
 
       return ocrText;
     } catch (err) {
-      console.warn("Tesseract OCR failed:", err.message);
+      //console.warn("Tesseract OCR failed:", err.message);
 
-      const filePath = saveFailedFile(file);
+      const savedFile = await saveFailedFile(file);
 
       logger.error("PDF_PARSE_ERROR", {
         message: err.message,
-        file: file.originalname,
-        savedAt: filePath,
+        file: savedFile.fileName,
+        savedAt: "backend/logs/files",
         mime: file.mimetype
       });
       throw new Error(
@@ -118,11 +119,11 @@ export const extractText = async (file) => {
       });
       return result.value;
     } catch (err) {
-      //console.error("DOCX_PARSE_ERROR: ", err);
+      const savedFile = await saveFailedFile(file);
       logger.error("DOCX_PARSE_ERROR", {
         message: err.message,
-        file: file.originalname,
-        savedAt: filePath,
+        file: savedFile.fileName,
+        savedAt: "backend/logs/files",
         mime: file.mimetype
       });
       throw new Error("DOCX_PARSE_ERROR: " + (err?.message || JSON.stringify(err)));
