@@ -87,13 +87,27 @@ export default function UploadModal({ onClose }) {
             JSON.stringify(data.result)
           );
           
+          if(data.result.status !== undefined){
+            if(data.result.status == 0){
+              setProgress(0);
+              setLoading(false);
+              alert("AI Analysis failed, Please try again...");
+              return;
+            }
+          }
+
           onClose();
           navigate("/result");
         }
 
         if (data.status === "failed") {
           clearInterval(interval);
-          alert("Processing failed"+" - "+data.error);
+          if(data.error == "Unsupported File Type"){
+            alert("Processing failed - Unsupported File Type!");
+          }else{
+            alert("Processing Failed, Please try again.");
+          }
+          setProgress(0);
           setLoading(false);
         }
 
@@ -101,6 +115,7 @@ export default function UploadModal({ onClose }) {
         clearInterval(interval);
         console.error(err);
         alert("Connection error");
+        setProgress(0);
         setLoading(false);
       }
     }, 800);

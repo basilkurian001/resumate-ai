@@ -155,6 +155,7 @@ export const analyzeResume = async (resumeText, fileMeta = {}) => {
     });
     // Safe fallback (prevents frontend crash)
     return {
+      status: 0,
       atsScore: 0,
       summary: "AI analysis failed. Please try again.",
       skills: [],
