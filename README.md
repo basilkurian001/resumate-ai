@@ -1,3 +1,5 @@
+<img width="1700" height="1170" alt="resumate_screenshot" src="https://github.com/user-attachments/assets/b560518a-f0cc-4a4d-b67b-3930fd511ccf" />
+
 # 🚀 Resumate AI — Intelligent Resume Analysis Platform
 
 [Go directly to Installation Guide](#-installation-guide)
